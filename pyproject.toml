@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "redis-memory-usage"
+version = "0.1.0"
+description = "Just shows memory usage per key for local Redis instance"
+authors = ["alexanderkjackson <alexanderkjackson@protonmail.com>"]
+license = "None"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+redis = "^5.0.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
