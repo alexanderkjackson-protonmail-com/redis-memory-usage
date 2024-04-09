@@ -1,12 +1,31 @@
 import redis
 import heapq
 import argparse
+import socket
+
+# Verify IP address or hostname supplied
+def ip_or_hostname(string):
+    try:
+        # Confirm valid IP address
+        socket.inet_aton(string)
+        return string
+    except socket.error:
+        # Not IP. Try and validate hostname
+        try:
+            socket.gethostbyname(string)
+            return string
+        except socket.error:
+            # Neither valid hostname nor IP supplied
+            raise argparse.ArgumentTypeError(f"{string} is not a valid IP"
+                                             " address nor hostname.")
 
 # Collect argument
-parser = argparse.ArgumentParser(description='Retrieves top memory-consuming\
-                                 keys from Redis database.')
-parser.add_argument('--heap-size', type=int, default=10, help='Specify number\
-                    of keys to retrieve (top heap_size keys by size).')
+parser = argparse.ArgumentParser(description="Retrieves top memory-consuming"
+                                 " keys from Redis database.")
+parser.add_argument('--heap-size', type=int, default=10, help="Specify number"
+                    " of keys to retrieve (top heap_size keys by size).")
+parser.add_argument('--host', type=ip_or_hostname, help="IP address or"
+                    " hostname of Redis host.")
 args = parser.parse_args()
 
 # Connect to Redis
