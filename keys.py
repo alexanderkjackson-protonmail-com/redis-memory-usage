@@ -3,7 +3,20 @@ import heapq
 import argparse
 import socket
 
-# Verify IP address or hostname supplied
+# Verify IP address or hostname supplied to arg parser
+def valid_port(port):
+    try:
+        port = int(port)
+        if 1 <= port <= 65535:
+            return port
+        else:
+            raise argparse.ArgumentTypeError(f"Invalid port number: {port}."
+                                             " Must be integer between"
+                                             " 1-65535 inclusive.")
+    except ValueError:
+        raise argparse.ArgumentTypeError(f"Invalid port number: {port}. Port"
+                                          "number must be an integer.")
+
 def ip_or_hostname(string):
     try:
         # Confirm valid IP address
@@ -19,13 +32,17 @@ def ip_or_hostname(string):
             raise argparse.ArgumentTypeError(f"{string} is not a valid IP"
                                              " address nor hostname.")
 
-# Collect argument
+# Collect arguments
 parser = argparse.ArgumentParser(description="Retrieves top memory-consuming"
                                  " keys from Redis database.")
 parser.add_argument('--heap-size', type=int, default=10, help="Specify number"
                     " of keys to retrieve (top heap_size keys by size).")
 parser.add_argument('--host', type=ip_or_hostname, help="IP address or"
                     " hostname of Redis host.")
+parser.add_argument('--port', type=valid_port, help="Port number to connect"
+                    " to")
+parser.add_argument('--database', type=int, help="Database to connect to")
+
 args = parser.parse_args()
 
 # Connect to Redis
