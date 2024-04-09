@@ -1,12 +1,13 @@
 import redis
 import heapq
+import argparse
 
 # Connect to Redis
 r = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
 
 # Batch size for pipelining
 BATCH_SIZE = 10
-list_size = 10
+heap_size = 10
 
 # Function to process a batch of keys with MEMORY USAGE using pipelining
 def process_keys(keys):
@@ -18,7 +19,7 @@ def process_keys(keys):
     results = pipeline.execute()
     for key, memory in zip(keys, results):
         heapq.heappush(key_memory_heap, (memory, key))
-        if len(key_memory_heap) > list_size:
+        if len(key_memory_heap) > heap_size:
             heapq.heappop(key_memory_heap)
 
 # Scan all keys and batch process them
