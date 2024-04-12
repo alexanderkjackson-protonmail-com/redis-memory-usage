@@ -15,7 +15,7 @@ def valid_port(port):
                                              " 1-65535 inclusive.")
     except ValueError:
         raise argparse.ArgumentTypeError(f"Invalid port number: {port}. Port"
-                                          "number must be an integer.")
+                                          " number must be an integer.")
 
 def ip_or_hostname(string):
     try:
@@ -39,20 +39,32 @@ parser.add_argument('--heap-size', type=int, default=10, help="Specify number"
                     " of keys to retrieve (top heap_size keys by size).")
 parser.add_argument('--host', type=ip_or_hostname, default='localhost',
                     help="IP address or hostname of Redis host.")
-parser.add_argument('--port', type=valid_port, default=6379,
+parser.add_argument('-p', '--port', type=valid_port, default=6379,
                     help="Port number to connect to")
-parser.add_argument('--database', type=int, help="Database to connect to")
-parser.add_argument('--password', type=str, default="foobared",
+parser.add_argument('-d', '--database', type=int, help="Database to use")
+parser.add_argument('-a', '--authenticate', type=str,
                     help="Password for authentication")
-parser.add_argument('-p', '--populate', metavar='file', type=str,
+parser.add_argument('--populate', type=str,
                     help='Populate database from CSV file')
 
 args = parser.parse_args()
 
+# Pack connection parameters dictionary
+connection_params = {
+    'host': args.host,
+    'port': args.port,
+}
+
+# Set password, if requested to be specified 
+if args.password is not None:
+    connection_params['password'] = args.password
+# Set database, if requested to be specified
+if args.database is not None:
+    connection_params['database'] = args.database
+
 # Connect to Redis
 try:
-    r = redis.Redis(host=args.host, port=args.port, db=args.database,
-                    password=args.password, decode_responses=True)
+    r = redis.Redis(**connection_params, decode_responses=True)
     r.ping() # Check if connection is alive
 except redis.exceptions.ConnectionError as error:
     print(f"Connection error: {error}")
