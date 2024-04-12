@@ -53,8 +53,9 @@ try:
                     password=args.password, decode_responses=True)
     r.ping() # Check if connection is alive
 except redis.exceptions.ConnectionError as error:
-    print(f"Connection refused: Unable to connect to Redis at"
-          " {args.host}:{args.port}")
+    print(f"Connection error: {error}")
+    print(f"Failed to connect to Redis at {args.host}:{args.port}")
+    exit(-1)
 
 # Batch size for pipelining
 BATCH_SIZE = 10
