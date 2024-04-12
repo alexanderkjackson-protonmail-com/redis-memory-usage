@@ -92,6 +92,7 @@ if args.populate_csv:
             r.set(key, value)
     exit(0)
 
+# Generate and load synthetic data of fixed length.
 if args.synpopulate:
     print(f'Generating and loading synthetic data.')
     numKeys = args.synpopulate[0]
