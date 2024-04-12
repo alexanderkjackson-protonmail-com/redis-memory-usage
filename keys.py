@@ -2,6 +2,7 @@ import redis
 import heapq
 import argparse
 import socket
+import csv
 
 # Verify IP address or hostname supplied to arg parser
 def valid_port(port):
@@ -44,7 +45,7 @@ parser.add_argument('-p', '--port', type=valid_port, default=6379,
 parser.add_argument('-d', '--database', type=int, help="Database to use")
 parser.add_argument('-a', '--password', type=str,
                     help="Password for authentication")
-parser.add_argument('--populate', type=str,
+parser.add_argument('--populate_csv', type=str,
                     help='Populate database from CSV file')
 
 args = parser.parse_args()
@@ -71,10 +72,13 @@ except redis.exceptions.ConnectionError as error:
     print(f"Failed to connect to Redis at {args.host}:{args.port}")
     exit(-1)
 
-# Load test data from file
-if args.populate:
-    print(f'Loading data from {args.populate}.')
-    # Load logic
+# Load test data from CSV file
+if args.populate_csv:
+    print(f'Loading data from {args.populate_csv}.')
+    with open(args.populate_csv, 'r') as file:
+        reader = csv.reader(file)
+        for key, value in reader:
+            r.set(key, value)
     exit(0)
 
 # Batch size for pipelining
