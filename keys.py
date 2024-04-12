@@ -3,6 +3,13 @@ import heapq
 import argparse
 import socket
 import csv
+import string
+import random
+
+# Generate random string
+def random_string(length):
+    return ''.join(random.choices(string.ascii_letters + string.digits,
+                                  k=length))
 
 # Verify IP address or hostname supplied to arg parser
 def valid_port(port):
@@ -45,8 +52,12 @@ parser.add_argument('-p', '--port', type=valid_port, default=6379,
 parser.add_argument('-d', '--database', type=int, help="Database to use")
 parser.add_argument('-a', '--password', type=str,
                     help="Password for authentication")
-parser.add_argument('--populate_csv', type=str,
+parser.add_argument('--populate_csv', metavar='CSV-FILE', type=str,
                     help='Populate database from CSV file')
+parser.add_argument('--synpopulate', nargs=2,
+                    metavar=('NUM_KEYS', 'KEY_LENGTH'),
+                    type=int, help='Populate database with NUMBER keys with'
+                    ' keys of KEY_LENGTH length.')
 
 args = parser.parse_args()
 
@@ -79,6 +90,17 @@ if args.populate_csv:
         reader = csv.reader(file)
         for key, value in reader:
             r.set(key, value)
+    exit(0)
+
+if args.synpopulate:
+    print(f'Generating and loading synthetic data.')
+    numKeys = args.synpopulate[0]
+    keyLength = args.synpopulate[1]
+    for index in range(0, numKeys):
+        keyValue = random_string(keyLength)
+        keyName = 'key' + f'{index}'
+        r.set(keyName,keyValue)
+    print(f'Populated database with {numKeys} keys of size {keyLength}')
     exit(0)
 
 # Batch size for pipelining
