@@ -42,7 +42,7 @@ parser.add_argument('--host', type=ip_or_hostname, default='localhost',
 parser.add_argument('-p', '--port', type=valid_port, default=6379,
                     help="Port number to connect to")
 parser.add_argument('-d', '--database', type=int, help="Database to use")
-parser.add_argument('-a', '--authenticate', type=str,
+parser.add_argument('-a', '--password', type=str,
                     help="Password for authentication")
 parser.add_argument('--populate', type=str,
                     help='Populate database from CSV file')
