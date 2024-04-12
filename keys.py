@@ -44,6 +44,8 @@ parser.add_argument('--port', type=valid_port, default=6379,
 parser.add_argument('--database', type=int, help="Database to connect to")
 parser.add_argument('--password', type=str, default="foobared",
                     help="Password for authentication")
+parser.add_argument('-p', '--populate', metavar='file', type=str,
+                    help='Populate database from CSV file')
 
 args = parser.parse_args()
 
@@ -56,6 +58,12 @@ except redis.exceptions.ConnectionError as error:
     print(f"Connection error: {error}")
     print(f"Failed to connect to Redis at {args.host}:{args.port}")
     exit(-1)
+
+# Load test data from file
+if args.populate:
+    print(f'Loading data from {args.populate}.')
+    # Load logic
+    exit(0)
 
 # Batch size for pipelining
 BATCH_SIZE = 10
