@@ -60,7 +60,7 @@ if args.password is not None:
     connection_params['password'] = args.password
 # Set database, if requested to be specified
 if args.database is not None:
-    connection_params['database'] = args.database
+    connection_params['db'] = args.database
 
 # Connect to Redis
 try:
