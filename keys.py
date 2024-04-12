@@ -37,16 +37,24 @@ parser = argparse.ArgumentParser(description="Retrieves top memory-consuming"
                                  " keys from Redis database.")
 parser.add_argument('--heap-size', type=int, default=10, help="Specify number"
                     " of keys to retrieve (top heap_size keys by size).")
-parser.add_argument('--host', type=ip_or_hostname, help="IP address or"
-                    " hostname of Redis host.")
-parser.add_argument('--port', type=valid_port, help="Port number to connect"
-                    " to")
+parser.add_argument('--host', type=ip_or_hostname, default='localhost',
+                    help="IP address or hostname of Redis host.")
+parser.add_argument('--port', type=valid_port, default=6379,
+                    help="Port number to connect to")
 parser.add_argument('--database', type=int, help="Database to connect to")
+parser.add_argument('--password', type=str, default="foobared",
+                    help="Password for authentication")
 
 args = parser.parse_args()
 
 # Connect to Redis
-r = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
+try:
+    r = redis.Redis(host=args.host, port=args.port, db=args.database,
+                    password=args.password, decode_responses=True)
+    r.ping() # Check if connection is alive
+except redis.exceptions.ConnectionError as error:
+    print(f"Connection refused: Unable to connect to Redis at"
+          " {args.host}:{args.port}")
 
 # Batch size for pipelining
 BATCH_SIZE = 10
