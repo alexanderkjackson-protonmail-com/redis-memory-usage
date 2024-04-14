@@ -92,7 +92,6 @@ def populate_synthetic(connection, numKeys, keyLength):
         except Exception as e:
             print(f'Error while populating database with key {keyName}:'
                   f' {str(e)}')
-        print(f'Set key {keyName} with value of size {keyLength}')
     print(f'Successfully populated database with {numKeys} keys of size:'
           f' {keyLength}')
 
