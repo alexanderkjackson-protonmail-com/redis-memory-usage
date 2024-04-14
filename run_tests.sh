@@ -11,3 +11,4 @@ echo "Executing tests..."
 pytest
 
 echo "Tests complete."
+docker stop redis-memory-usage-redis-1

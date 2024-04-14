@@ -1,18 +1,11 @@
 #from client import redis_client
+from client import redis_client
 import redis
 import subprocess
 import pytest
 
-batch_size = 10
 key_size = 20
 num_keys = 10
-
-@pytest.fixture
-def redis_client():
-    client = redis.Redis(host='localhost', port=6379, db=0)
-    client.flushdb()  # Clear the database before each test
-    yield client
-    client.close()
 
 @pytest.fixture
 def insert_data():
