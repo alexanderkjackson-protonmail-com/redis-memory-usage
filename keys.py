@@ -123,10 +123,10 @@ def largest_keys(connection, heap_size, batch_size):
     if not isinstance(batch_size, int) or batch_size <= 0:
         raise ValueError('batch_size must be a positive integer.')
 
-    cursor = '0'
+    cursor = 0
     key_memory_heap = []
 
-    while cursor != '0':
+    while True:
         try:
             cursor, keys = connection.scan(cursor=cursor, match='*',
                                            count=batch_size)
@@ -149,23 +149,9 @@ def largest_keys(connection, heap_size, batch_size):
                     heapq.heappop(key_memory_heap)
         except Exception as e:
             raise Exception(f'Failed during heap operations: {str(e)}')
+        if cursor == 0:
+            break
     return sorted(key_memory_heap, key=lambda x: x[0], reverse=True)
-## Scan all keys and batch process them
-#    cursor = '0'
-#    key_memory_heap = []
-#    while cursor != 0:
-#        cursor, keys = connection.scan(cursor=cursor, match='*',
-#                                       count=batch_size)
-#        pipeline = connection.pipeline()
-#        for key in keys:
-#            pipeline.memory_usage(key)
-#        results = pipeline.execute()
-#        for key, memory in zip(keys, results):
-#            heapq.heappush(key_memory_heap, (memory, key))
-#            if len(key_memory_heap) > heap_size:
-#                heapq.heappop(key_memory_heap)
-#    return sorted(key_memory_heap, key=lambda x: x[0],
-#                                    reverse=True)
 
 # Generate random string
 def random_string(length):
